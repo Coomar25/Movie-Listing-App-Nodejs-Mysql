@@ -1,5 +1,8 @@
 import mysql from "mysql2";
-import donenv from "dotenv";
+import dotenv from "dotenv";
+dotenv.config();
+
+
 
 const createConnection = () => {
   return mysql.createPool({
