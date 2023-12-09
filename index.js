@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import { userRouter } from "./routes/userRouter.js";
 import { authRouter } from './routes/authRouter.js';
-import { postRouter } from './routes/postRouter.js';
 import { adminAuthRouter } from './routes/admin/adminAuthRouter.js';
+import {movieRouter} from './routes/admin/movieRouter.js';
 import  createConnection  from "./config/dbConnect.js";
 import cors from "cors"
 
@@ -40,8 +40,8 @@ app.use(cors({origin: process.env.CORS_URL}));
 // cors error auuna sakxa ra aslai chai route handler vanda agadi nai rakhna parxa
 app.use("/", userRouter);
 app.use('/auth', authRouter);
-app.use('/post', postRouter);
 app.use('/admin', adminAuthRouter);
+app.use('/movie', movieRouter);
 
 
 

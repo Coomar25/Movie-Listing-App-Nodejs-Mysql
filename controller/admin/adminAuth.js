@@ -11,6 +11,7 @@ export const adminloginUser = async (req, res) => {
     }
     const sqlSelect = "SELECT * FROM admin WHERE email = ?";
     try {
+        // prepared statement use gareko sql injection lai rokna ko lagi
         const [rows] = await db.promise().execute(sqlSelect, [email]);
 
         if (rows.length === 0) {

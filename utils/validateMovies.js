@@ -2,11 +2,12 @@ import joi from "joi"
 import path from "path"
 
 const postSchema = joi.object({
-    title: joi.string().required().trim(),
-    description: joi.string().required().trim(),
-    content: joi.string().required().trim(),
+    movie_name: joi.string().required().trim(),
+    movie_description: joi.string().required().trim(),
     category_id: joi.number().integer().required(),
-    image: joi.string()
+    showtime_id: joi.number().integer().required(),
+    embedded_links: joi.string().required().trim(),
+    cover_image: joi.string()
         .required()
         .custom((value, context) => {
             const ext = path.extname(value); // Get the file extension
@@ -17,7 +18,8 @@ const postSchema = joi.object({
             }
             return value;
         }),
-    uid: joi.number().integer().required()
+    movie_length: joi.number().integer().required(),
+    releasing_on: joi.string().required(),
 });
 
 
@@ -26,7 +28,9 @@ const postSchema = joi.object({
     const { error, value } = postSchema.validate(data, { abortEarly: false });
   
     if (error) {
-      throw new Error(error.details[0].message); 
+      console.log(error.details[0].message);
+      return res.statu(401).send({ error: error.details[0].message });
+      // throw new Error(error.details[0].message); 
     }
     return value; 
   };
@@ -35,12 +39,3 @@ const postSchema = joi.object({
 
 
 
-
-//  const validatePostData = (data) => {
-//     const { title, description, content, image } = data;
-//     if (!title || !description || !content || !image) {
-//       throw new Error("Please provide all fields");
-//     }
-//   };
-
-// export default validatePostData;

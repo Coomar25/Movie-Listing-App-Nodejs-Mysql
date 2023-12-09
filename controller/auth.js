@@ -24,6 +24,11 @@ export const registerUser = async (req, res) => {
         error: "Seems like some fields are empty! Provide all field intel.",
       });
   }
+  // Validate email using a regular expression
+    const emailRegex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+    if (!emailRegex.test(email)) {
+      return res.send({warning: "Invalid email format"});
+    }
 
 
 
