@@ -29,7 +29,6 @@ const insertMovie = async (connection, movie, res) => {
     movie_name,
     movie_description,
     category_id,
-    showtime_id,
     embedded_links,
     cover_image,
     movie_length,
@@ -47,8 +46,8 @@ const insertMovie = async (connection, movie, res) => {
 
   //  parameterized query use gareko SQL injection lai prevent garna ko lagi
   const sql = `
-    INSERT INTO movies(movie_name, slug, movie_description, category_id, showtime_id, embedded_links, cover_image, movie_length, releasing_on)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO movies(movie_name, slug, movie_description, category_id, embedded_links, cover_image, movie_length, releasing_on)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
 
@@ -58,7 +57,6 @@ const insertMovie = async (connection, movie, res) => {
     slug,
     movie_description,
     category_id,
-    showtime_id,
     embedded_links,
     cover_image,
     movie_length,
@@ -77,7 +75,7 @@ export const addMovie = async (req, res) => {
     await connection.beginTransaction();
 
     // asma chai JOI package use gareka xaam validation ko lagi
-    validatePostData(req.body);
+    // validatePostData(req.body);
 
     // Generate the slug outside of the SQL statement
     const slug = generateSlug(connection, req.body.movie_name);
@@ -94,7 +92,7 @@ export const addMovie = async (req, res) => {
 
     await connection.commit();
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Post has been created",
       response: { ...req.body, slug },
     });
@@ -108,13 +106,97 @@ export const addMovie = async (req, res) => {
       const validationErrorMessage = error.details
         .map((detail) => detail.message)
         .join(", ");
-      res.status(400).json({ error: validationErrorMessage });
+      return res.status(400).json({ error: validationErrorMessage });
     } else {
       console.error(error.message);
-      res.status(500).send({
+      return res.status(500).send({
         response: "Internal Server Error",
       });
     }
+  } finally {
+    if (connection) {
+      connection.release();
+    }
+  }
+};
+
+
+
+
+// ===========================================================================================================================
+// ===========================================================================================================================
+// ===========================================================================================================================
+
+
+const updateMovie = async (connection, movie, res) => {
+  // Destructure movie object for easier access to data
+  const {
+    id,
+    movie_name,
+    movie_description,
+    category_id,
+    showtime_id,
+    embedded_links,
+    cover_image,
+    movie_length,
+    releasing_on,
+  } = movie;
+
+
+
+  // Parameterized query to prevent SQL injection
+  const sql = `
+    UPDATE movies
+    SET
+      movie_name = ?,
+      movie_description = ?,
+      category_id = ?,
+      showtime_id = ?,
+      embedded_links = ?,
+      cover_image = ?,
+      movie_length = ?,
+      releasing_on = ?
+    WHERE id = ?
+  `;
+
+  try {
+    // Execute the update query with parameterized values
+    await connection.execute(sql, [
+      movie_name,
+      movie_description,
+      category_id,
+      showtime_id,
+      embedded_links,
+      cover_image,
+      movie_length,
+      releasing_on,
+      id,
+    ]);
+
+    res.status(200).json({
+      message: "Movie updated successfully",
+      response: movie,
+    });
+  } catch (error) {
+    // Handle any errors
+    console.error(error);
+    res.status(500).send({
+      response: "Internal Server Error",
+    });
+  }
+};
+
+export const updateMovieHandler = async (req, res) => {
+  let connection;
+  try {
+    connection = await db.promise().getConnection();
+    await updateMovie(connection, req.body, res);
+  } catch (error) {
+    if (connection) {
+      connection.release();
+    }
+
+
   } finally {
     if (connection) {
       connection.release();
