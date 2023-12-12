@@ -9,10 +9,7 @@ const router = express.Router();
 
 
 
-// Router
-router.get("/", (req, res) => {
-        res.send("Welcome to our blog api");
-});
+
 
 router.post("/registeruser", registerUser);
 router.post("/loginuser", loginUser);

@@ -44,6 +44,11 @@ app.use('/admin', adminAuthRouter);
 app.use('/movie', movieRouter);
 
 
+app.set('view engine', 'ejs');
+
+
+
+
 
 
 
