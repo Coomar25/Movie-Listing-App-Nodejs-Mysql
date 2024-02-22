@@ -29,7 +29,7 @@ const postSchema = joi.object({
   
     if (error) {
       console.log(error.details[0].message);
-      return res.statu(401).send({ error: error.details[0].message });
+      return res.status(401).send({ error: error.details[0].message });
       // throw new Error(error.details[0].message); 
     }
     return value; 
